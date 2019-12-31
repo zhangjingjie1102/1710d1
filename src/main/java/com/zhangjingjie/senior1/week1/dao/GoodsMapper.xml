@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间的值为dao层接口的权限定名 -->
+<mapper namespace="com.zhangjingjie.senior1.week1.dao.GoodsMapper">
+	<select id="listGoods" resultMap="goodsMap">
+		select * from tb_goods
+		<where>
+			<if test="null!=gname and gname!=''">and gname like '%${gname}%'</if>
+		</where>
+	</select>
+	
+	<resultMap type="Goods" id="goodsMap">
+		<id property="gid" column="gid"/>
+		<result property="gname" column="gname"/>
+		<result property="gEnglishName" column="gEnglishName"/>
+		<result property="bid" column="bid"/>
+		<result property="kid" column="kid"/>
+		<result property="size" column="size"/>
+		<result property="price" column="price"/>
+		<result property="gnum" column="gnum"/>
+		<result property="glabel" column="glabel"/>
+		<result property="image" column="image"/>
+		<association property="brand" javaType="Brand"
+			select="com.zhangjingjie.senior1.week1.dao.GoodsMapper.findByBid"
+			column="bid"
+		></association>
+		<association property="kind" javaType="Kind"
+			select="com.zhangjingjie.senior1.week1.dao.GoodsMapper.findByKid"
+			column="kid"
+		></association>
+	</resultMap>
+	
+	<select id="findByBid" resultType="Brand">
+		select * from tb_brand where bid = #{bid}
+	</select>
+	
+	<select id="findByKid" resultType="Kind">
+		select * from tb_goodskind where kid = #{kid}
+	</select>
+	
+	
+	<select id="selectBrand" resultType="Brand">
+		select * from tb_brand
+	</select>
+	
+	<select id="selectKind" resultType="Kind">
+		select * from tb_goodskind
+	</select>
+	
+	<insert id="addGoods">
+		insert into tb_goods values(Default,#{gname},#{gEnglishName},#{bid},#{kid},#{size},#{price},#{gnum},#{glabel},#{image})
+	</insert>
+	
+	<update id="updateGoods">
+		update tb_goods set gname=#{gname},gEnglishName=#{gEnglishName},bid=#{bid},kid=#{kid},size=#{size},price=#{price},gnum=#{gnum},glabel=#{glabel},image=#{image} where gid=#{gid}
+	</update>
+	
+	<select id="selectOneGoods" resultMap="goodsMap">
+		select * from tb_goods where gid = #{gid}
+	</select>
+	
+	<delete id="deleteGoods">
+		delete from tb_goods where gid in(#{gids})
+	</delete>
+</mapper>
